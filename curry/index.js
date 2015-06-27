@@ -1,26 +1,20 @@
 'use strict';
-var toArray = function(args){
-	return Array.prototype.slice.call(args,0);
-}
 
 var sub_curry = function (fn) {
-    var args = [].slice.call(arguments, 1);
-    console.log(args);
-    console.log(toArray(arguments));
+    var args = Array.prototype.slice.call(arguments, 1);
     return function () {
-        return fn.apply(this, args.concat(toArray(arguments)));
+        return fn.apply(this, args.concat(Array.prototype.slice.call(arguments,0)));
     };
 }
 
 var curry = function(fn, length){
 	length = length || fn.length;
 	return function(){
-		if(arguments.length<length){
-			var combined = [fn].concat(toArray(arguments));
-			return length - arguments.length>0?curry(sub_curry.apply(this,combined), length-arguments.length):sub_curry.call(this, combined);
-		}else{
+		if (arguments.length == length){
 			return fn.apply(this,arguments);
 		}
+		var combined = [fn].concat(Array.prototype.slice.call(arguments,0));
+		return curry(sub_curry.apply(this,combined), length-arguments.length);
 	};
 }
 
